@@ -1,0 +1,28 @@
+{
+  "devDependencies": {
+    "body-parser": "^1.18.2",
+    "browser-sync": "^2.18.13",
+    "cookie-parser": "^1.4.3",
+    "del": "^3.0.0",
+    "express": "^4.16.2",
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^4.0.0",
+    "gulp-cache": "^1.0.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-htmlmin": "^3.0.0",
+    "gulp-imagemin": "^4.0.0",
+    "gulp-plumber": "^1.1.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^3.1.0",
+    "gulp-svgmin": "^1.2.4",
+    "gulp-svgstore": "^6.1.0",
+    "gulp-uglify": "^3.0.0",
+    "gulp-util": "^3.0.8",
+    "gulp-watch": "^4.3.11",
+    "gulp-webpack": "^1.5.0",
+    "imagemin-pngquant": "^5.0.1",
+    "run-sequence": "^2.2.0",
+    "through2": "^2.0.3",
+    "webpack": "^3.10.0"
+  }
+}
