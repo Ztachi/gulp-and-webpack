@@ -51,19 +51,19 @@
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	const repeat=__webpack_require__(2);
-	console.log('567'.repeat(5));
+	const repeat = __webpack_require__(2);
+	document.querySelector('#text').innerText = '567'.repeat(2);
 
 /***/ }),
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = function(){
-	    var arr=function(d){
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_FACTORY__ = (() => {
+	    let arr = (d) => {
 	        return d.repeat(5);
 	    }
 	    return arr;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	}), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ })
 /******/ ]);

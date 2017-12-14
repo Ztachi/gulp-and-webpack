@@ -1,2 +1,2 @@
-const repeat=require('widget/getRepeat');
-console.log('567'.repeat(5));
+const repeat = require('widget/getRepeat');
+document.querySelector('#text').innerText = '567'.repeat(2);

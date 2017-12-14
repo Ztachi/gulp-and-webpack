@@ -3,19 +3,17 @@
  * @Date: 2017-12-08 10:46:27 
  * @Description: 
  * @Last Modified by: 詹真琦
- * @Last Modified time: 2017-12-08 15:02:10
+ * @Last Modified time: 2017-12-14 17:28:53
  */
 
 const express = require('express'),
-app =express(),
-http = require('http'),
-path = require('path'),
-bodyParser = require('body-parser');
+    app = express(),
+    http = require('http'),
+    path = require('path'),
+    bodyParser = require('body-parser'),
+    routers = require('./routers');
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'src/static')));
-app.use('/img',express.static(path.join(__dirname, 'src/static/img')));
-app.use('/js',express.static(path.join(__dirname, 'src/static/js')));
-app.use('/css',express.static(path.join(__dirname, 'src/static/css')));
-app.use('/svg',express.static(path.join(__dirname, 'src/static/svg')));
-
-const server=http.createServer(app).listen(3000);
+const staticBasePath = path.join(__dirname, 'src');
+app.use(express.static(path.join(staticBasePath, 'static')));
+const server = http.createServer(app).listen(3000);
+routers(app);
