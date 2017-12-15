@@ -1,9 +1,9 @@
 /*
- * @Author: 詹真琦 (legendryztachi@gmail.com)
+ * @Author: 詹真琦(legendryztachi@gmail.com)
  * @Date: 2017-12-08 15:18:50 
  * @Description: 
  * @Last Modified by: 詹真琦(legendryztachi@gmail.com)
- * @Last Modified time: 2017-12-15 10:40:22
+ * @Last Modified time: 2017-12-15 14:41:25
  */
 
 const gulp = require("gulp"),

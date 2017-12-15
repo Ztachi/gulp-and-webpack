@@ -67,3 +67,11 @@
     background-color: rgba(0, 0, 0, $opacity);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#7F000000, endColorstr=#7F000000);
 }
+
+//单行超出宽度截取
+@mixin ellipsis {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

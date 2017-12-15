@@ -1,22 +1,15 @@
 /*
- * @Author: 詹真琦 (legendryztachi@gmail.com)
+ * @Author: 詹真琦(legendryztachi@gmail.com)
  * @Date: 2017-12-08 15:18:44 
  * @Description: 
  * @Last Modified by: 詹真琦(legendryztachi@gmail.com)
- * @Last Modified time: 2017-12-15 10:40:49
+ * @Last Modified time: 2017-12-15 15:42:38
  */
 const webpack = require('webpack'),
     path = require('path'),
     BASE_PATH = './src/app/js/';
 
 module.exports = {
-    watch:true,
-    watchOptions:{
-        //增加延迟
-        aggregateTimeout: 500,
-        //忽略文件夹
-        ignored: /node_modules/
-    },
     resolve: {
         // 给路径添加别名，可有效避免模块中require的路径过长
         alias: {
@@ -26,7 +19,7 @@ module.exports = {
     module:{
         rules:[
             {
-                test:'/\.js$/',
+                test:/(\.html|\.js)$/,
                 use:{
                     loader: "babel-loader",
                     options: {
