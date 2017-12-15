@@ -1,22 +1,15 @@
 /*
- * @Author: 詹真琦 
+ * @Author: 詹真琦 (legendryztachi@gmail.com)
  * @Date: 2017-12-08 15:18:44 
  * @Description: 
- * @Last Modified by: 詹真琦
- * @Last Modified time: 2017-12-08 17:19:25
+ * @Last Modified by: 詹真琦(legendryztachi@gmail.com)
+ * @Last Modified time: 2017-12-15 10:40:49
  */
 const webpack = require('webpack'),
     path = require('path'),
     BASE_PATH = './src/app/js/';
 
 module.exports = {
-    // entry: {
-    //     'index': BASE_PATH + 'index'
-    // },
-    // output: {
-    //     path: path.resolve(__dirname , './src/static/js'),
-    //     filename: '[name].js'
-    // },
     watch:true,
     watchOptions:{
         //增加延迟

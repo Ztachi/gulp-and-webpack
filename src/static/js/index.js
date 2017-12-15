@@ -52,7 +52,7 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 	const repeat = __webpack_require__(2);
-	document.querySelector('#text').innerText = '567'.repeat(2);
+	document.querySelector('#text').innerText = '重装机兵1地图'.repeat(1);
 
 /***/ }),
 /* 2 */

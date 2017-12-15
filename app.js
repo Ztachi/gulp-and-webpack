@@ -1,9 +1,9 @@
 /*
- * @Author: 詹真琦 
+ * @Author: 詹真琦 (legendryztachi@gmail.com)
  * @Date: 2017-12-08 10:46:27 
  * @Description: 
- * @Last Modified by: 詹真琦
- * @Last Modified time: 2017-12-14 17:28:53
+ * @Last Modified by: 詹真琦(legendryztachi@gmail.com)
+ * @Last Modified time: 2017-12-15 11:00:04
  */
 
 const express = require('express'),
@@ -15,5 +15,6 @@ const express = require('express'),
 app.use(bodyParser.json());
 const staticBasePath = path.join(__dirname, 'src');
 app.use(express.static(path.join(staticBasePath, 'static')));
+app.use('/common',express.static(path.join(staticBasePath, 'common')));
 const server = http.createServer(app).listen(3000);
 routers(app);

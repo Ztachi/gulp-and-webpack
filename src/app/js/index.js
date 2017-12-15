@@ -1,2 +1,2 @@
 const repeat = require('widget/getRepeat');
-document.querySelector('#text').innerText = '567'.repeat(2);
+document.querySelector('#text').innerText = '重装机兵1地图'.repeat(1);
