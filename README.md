@@ -1,4 +1,4 @@
-#用gulp+webpack构建一个自动化、模块化的前端项目  
+# 用gulp+webpack构建一个自动化、模块化的前端项目  
 1.clone代码;  
 2.运行npm i;  
 3.运行node app.js;  
