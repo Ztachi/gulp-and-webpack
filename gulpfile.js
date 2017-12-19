@@ -3,7 +3,7 @@
  * @Date: 2017-12-08 15:18:50 
  * @Description: 
  * @Last Modified by: 詹真琦(legendryztachi@gmail.com)
- * @Last Modified time: 2017-12-19 09:46:23
+ * @Last Modified time: 2017-12-19 15:13:16
  */
 
 const gulp = require("gulp"),
@@ -39,7 +39,9 @@ const gulp = require("gulp"),
     htmlmin = require('gulp-htmlmin'),
     //保持文件名称
     named = require('vinyl-named'),
-    webpack = require('webpack-stream');
+    webpack = require('webpack-stream'),
+    gulpif = require('gulp-if'),
+    filter = require('gulp-filter');
 
 const paths = {
     src: path.resolve(__dirname, './src'),
@@ -49,6 +51,7 @@ const paths = {
     svg: path.resolve(__dirname, './src/app/svg'),
     html: path.resolve(__dirname, './src/app/view'),
     widget: path.resolve(__dirname, './src/widget'),
+    common: path.resolve(__dirname, './src/common'),
     static: path.resolve(__dirname, './src/static'),
     staticJs: path.resolve(__dirname, './src/static/js'),
     staticCss: path.resolve(__dirname, './src/static/css'),
@@ -63,6 +66,7 @@ let reloadTimer = null;
 //是否是打包
 let release = false;
 
+
 function reloadBrowser() {
     // # watch src资源, 调用相关任务预处理
     // # 刷新浏览器
@@ -72,7 +76,7 @@ function reloadBrowser() {
         let url = obj.path.replace(/\\/g, "/");
         let absurl = url;
         url = path.relative(paths.src, url).replace(/\\/g, "/");
-        console.log("[KS] " + absurl);
+        gutil.log(gutil.colors.green("[KS] " + absurl));
 
         // skip scss & css
         if (!/\.scss$/.test(url) && !/\.css$/.test(url)) {
@@ -93,6 +97,11 @@ gulp.task('sass', () => {
                 outputStyle: release ? "compressed" : "expanded"
             })
             .on("error", sass.logError))
+        .pipe(gulpif(release, autoprefixer({
+            browsers: ['last 30 versions'], //兼容版本
+            cascade: true, //是否美化属性值
+            remove: false //是否去掉不必要的前缀
+        })))
         .pipe(gulp.dest(paths.staticCss))
         .pipe(reload({
             stream: true
@@ -100,15 +109,15 @@ gulp.task('sass', () => {
 })
 
 //压缩并补全前缀
-gulp.task('autoprefixer', ['sass'], () => {
-    return gulp.src(paths.css + '/**/*.{scss,css}')
-        .pipe(autoprefixer({
-            browsers: ['last 30 versions'], //兼容版本
-            cascade: true, //是否美化属性值
-            remove: false //是否去掉不必要的前缀
-        }))
-        .pipe(gulp.dest(paths.staticCss))
-});
+// gulp.task('autoprefixer', ['sass'], () => {
+//     return gulp.src(paths.css + '/**/*.{scss,css}')
+//         .pipe(autoprefixer({
+//             browsers: ['last 30 versions'], //兼容版本
+//             cascade: true, //是否美化属性值
+//             remove: false //是否去掉不必要的前缀
+//         }))
+//         .pipe(gulp.dest(paths.staticCss))
+// });
 
 //编译js
 gulp.task('js', () => {
@@ -202,16 +211,16 @@ gulp.task("svgsprite", function () {
 //压缩html
 gulp.task('htmlMin', () => {
     return gulp.src(paths.html + '/**/*.html')
-        .pipe(htmlmin({
-            removeComments: release, //清除HTML注释
-            collapseWhitespace: release, //压缩HTML
-            collapseBooleanAttributes: release, //省略布尔属性的值 <input checked="true"/> ==> <input />
-            removeEmptyAttributes: release, //删除所有空格作属性值 <input id="" /> ==> <input />
-            removeScriptTypeAttributes: release, //删除<script>的type="text/javascript"
-            removeStyleLinkTypeAttributes: release, //删除<style>和<link>的type="text/css"
-            minifyJS: release, //压缩页面JS
-            minifyCSS: release //压缩页面CSS
-        }))
+        .pipe(gulpif(release, htmlmin({
+            removeComments: true, //清除HTML注释
+            collapseWhitespace: true, //压缩HTML
+            collapseBooleanAttributes: true, //省略布尔属性的值 <input checked="true"/> ==> <input />
+            removeEmptyAttributes: true, //删除所有空格作属性值 <input id="" /> ==> <input />
+            removeScriptTypeAttributes: true, //删除<script>的type="text/javascript"
+            removeStyleLinkTypeAttributes: true, //删除<style>和<link>的type="text/css"
+            minifyJS: true, //压缩页面JS
+            minifyCSS: true //压缩页面CSS
+        })))
         .pipe(gulp.dest(paths.staticHtml));
 });
 
@@ -267,6 +276,18 @@ gulp.task('clean:static', () => {
     });
 });
 
+//复制工具类JS,原本就压缩过的文件不再压缩
+gulp.task('copy:common', () => {
+    let f = filter(['**/*.js', '!**/*.min.js'], {
+        restore: true
+    });
+    return gulp.src(paths.common + '/**/*.js')
+        .pipe(f)
+        .pipe(uglify())
+        .pipe(f.restore)
+        .pipe(gulp.dest(path.join(paths.dist,'/common')));
+});
+
 //复制打包目录
 gulp.task("copy:dist", () => {
     return gulp.src([paths.static + '/**/*',
@@ -278,5 +299,5 @@ gulp.task("copy:dist", () => {
 //压缩打包
 gulp.task('release', (cb) => {
     release = true;
-    sequence(['clean:dist', 'clean:static', 'clearCache'], ['htmlMin', 'jsmin', 'autoprefixer', 'svgsprite', 'imgMin'], 'copy:dist', cb);
+    sequence(['clean:dist', 'clean:static', 'clearCache'], ['htmlMin', 'jsmin', 'sass', 'svgsprite', 'imgMin'], ['copy:common','copy:dist'], cb);
 });
