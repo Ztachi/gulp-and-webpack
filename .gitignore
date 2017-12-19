@@ -2,5 +2,5 @@
 .git
 .gitignore
 /node_modules/
-/disc/
+/dist/
 src/static/

@@ -3,7 +3,7 @@
  * @Date: 2017-12-08 15:18:50 
  * @Description: 
  * @Last Modified by: 詹真琦(legendryztachi@gmail.com)
- * @Last Modified time: 2017-12-15 17:10:09
+ * @Last Modified time: 2017-12-19 09:46:23
  */
 
 const gulp = require("gulp"),
@@ -24,6 +24,7 @@ const gulp = require("gulp"),
     watch = require("gulp-watch"),
     svgstore = require("gulp-svgstore"),
     svgmin = require("gulp-svgmin"),
+    babel = require("gulp-babel"),
     //css3补全前缀
     autoprefixer = require('gulp-autoprefixer'),
     //图片压缩
@@ -38,7 +39,7 @@ const gulp = require("gulp"),
     htmlmin = require('gulp-htmlmin'),
     //保持文件名称
     named = require('vinyl-named'),
-    webpack = require('gulp-webpack');
+    webpack = require('webpack-stream');
 
 const paths = {
     src: path.resolve(__dirname, './src'),
@@ -48,15 +49,19 @@ const paths = {
     svg: path.resolve(__dirname, './src/app/svg'),
     html: path.resolve(__dirname, './src/app/view'),
     widget: path.resolve(__dirname, './src/widget'),
+    static: path.resolve(__dirname, './src/static'),
     staticJs: path.resolve(__dirname, './src/static/js'),
     staticCss: path.resolve(__dirname, './src/static/css'),
     staticImg: path.resolve(__dirname, './src/static/img'),
     staticSvg: path.resolve(__dirname, './src/static/svg'),
-    staticHtml: path.resolve(__dirname, './src/static/view')
+    staticHtml: path.resolve(__dirname, './src/static/view'),
+    dist: path.resolve(__dirname, './dist')
 }
 
 // 保存定时器，限制浏览器刷新频率
 let reloadTimer = null;
+//是否是打包
+let release = false;
 
 function reloadBrowser() {
     // # watch src资源, 调用相关任务预处理
@@ -81,29 +86,42 @@ function reloadBrowser() {
 
 //编译sass
 gulp.task('sass', () => {
-    return gulp.src(paths.css + '/**/*.scss')
+    return gulp.src(paths.css + '/**/*.{scss,css}')
         .pipe(plumber())
         .pipe(sass({
                 precision: 2,
-                outputStyle: "expanded"
+                outputStyle: release ? "compressed" : "expanded"
             })
             .on("error", sass.logError))
-        .pipe(autoprefixer({
-            browsers: ['last 30 versions'], //兼容版本
-            cascade: true, //是否美化属性值
-            remove: false //是否去掉不必要的前缀
-        }))
         .pipe(gulp.dest(paths.staticCss))
         .pipe(reload({
             stream: true
         }));
 })
 
+//压缩并补全前缀
+gulp.task('autoprefixer', ['sass'], () => {
+    return gulp.src(paths.css + '/**/*.{scss,css}')
+        .pipe(autoprefixer({
+            browsers: ['last 30 versions'], //兼容版本
+            cascade: true, //是否美化属性值
+            remove: false //是否去掉不必要的前缀
+        }))
+        .pipe(gulp.dest(paths.staticCss))
+});
+
 //编译js
 gulp.task('js', () => {
     return gulp.src(paths.js + '/**/*.js')
         .pipe(named())
         .pipe(webpack(require('./webpack.config')))
+        .pipe(gulp.dest(paths.staticJs));
+});
+
+//编译并压缩js
+gulp.task('jsmin', ['js'], () => {
+    return gulp.src(paths.staticJs + '/**/*.js')
+        .pipe(uglify())
         .pipe(gulp.dest(paths.staticJs));
 });
 
@@ -126,53 +144,81 @@ gulp.task('clearCache', () =>
 );
 
 //合并，压缩SVG
-gulp.task("svgsprite", function() {
-	return gulp.src(paths.svg+'/**/*.svg')
-		.pipe(plumber())
-		.pipe(rename({prefix: 'icon-'}))
-		.pipe(through2.obj(function(file, enc, cb) {
-			console.log(file.path);
-			this.push(file);
-			cb();
-		})
-		)
-		.pipe(cache(svgmin({
-			plugins: [
-				{ removeTitle: true },
-				{ removeDesc: true },
-				{ removeUselessDefs: true },
-				{ removeUnknownsAndDefaults: true },
-				{ removeUselessStrokeAndFill: true },
-				{ convertTransform: true },
-				{ mergePaths: true },
-				{ convertPathData: false },
-				{ convertShapeToPath: true },
-				{ removeStyleElement: true },
-				{ removeAttrs: {attrs: "(class|style|fill|data-.*)"} }
-			]
-		})))
-		.pipe(svgstore( {inlineSvg: true} ))
-		.pipe(gulp.dest(paths.staticSvg));
+gulp.task("svgsprite", function () {
+    return gulp.src(paths.svg + '/**/*.svg')
+        .pipe(plumber())
+        .pipe(rename({
+            prefix: 'icon-'
+        }))
+        .pipe(through2.obj(function (file, enc, cb) {
+            console.log(file.path);
+            this.push(file);
+            cb();
+        }))
+        .pipe(cache(svgmin({
+            plugins: [{
+                    removeTitle: true
+                },
+                {
+                    removeDesc: true
+                },
+                {
+                    removeUselessDefs: true
+                },
+                {
+                    removeUnknownsAndDefaults: true
+                },
+                {
+                    removeUselessStrokeAndFill: true
+                },
+                {
+                    convertTransform: true
+                },
+                {
+                    mergePaths: true
+                },
+                {
+                    convertPathData: false
+                },
+                {
+                    convertShapeToPath: true
+                },
+                {
+                    removeStyleElement: true
+                },
+                {
+                    removeAttrs: {
+                        attrs: "(class|style|fill|data-.*)"
+                    }
+                }
+            ]
+        })))
+        .pipe(svgstore({
+            inlineSvg: true
+        }))
+        .pipe(gulp.dest(paths.staticSvg));
 });
 
 //压缩html
 gulp.task('htmlMin', () => {
-    return gulp.src(paths.html+'/**/*.html')
+    return gulp.src(paths.html + '/**/*.html')
         .pipe(htmlmin({
-            removeComments: true, //清除HTML注释
-            collapseWhitespace: true, //压缩HTML
-            collapseBooleanAttributes: true, //省略布尔属性的值 <input checked="true"/> ==> <input />
-            removeEmptyAttributes: true, //删除所有空格作属性值 <input id="" /> ==> <input />
-            removeScriptTypeAttributes: true, //删除<script>的type="text/javascript"
-            removeStyleLinkTypeAttributes: true, //删除<style>和<link>的type="text/css"
-            minifyJS: true, //压缩页面JS
-            minifyCSS: true //压缩页面CSS
+            removeComments: release, //清除HTML注释
+            collapseWhitespace: release, //压缩HTML
+            collapseBooleanAttributes: release, //省略布尔属性的值 <input checked="true"/> ==> <input />
+            removeEmptyAttributes: release, //删除所有空格作属性值 <input id="" /> ==> <input />
+            removeScriptTypeAttributes: release, //删除<script>的type="text/javascript"
+            removeStyleLinkTypeAttributes: release, //删除<style>和<link>的type="text/css"
+            minifyJS: release, //压缩页面JS
+            minifyCSS: release //压缩页面CSS
         }))
         .pipe(gulp.dest(paths.staticHtml));
 });
 
+
 //启动项目
 gulp.task('default', () => {
+    release = false;
     // start server
     browserSync.init({
         ui: false,
@@ -191,18 +237,46 @@ gulp.task('default', () => {
     gulp.src(jsPath)
         .pipe(watch(jsPath, () => gulp.start('js')));
     //img文件监听
-    let imgPath = paths.img+ '/**/*.{png,jpg,gif,ico,svg}';
+    let imgPath = paths.img + '/**/*.{png,jpg,gif,ico,svg}';
     gulp.src(imgPath)
         .pipe(watch(imgPath, () => gulp.start('imgMin')));
     //svg文件监听
-    let svgPath = paths.svg+'/**/*.svg';
+    let svgPath = paths.svg + '/**/*.svg';
     gulp.src(svgPath)
         .pipe(watch(svgPath, () => gulp.start('svgsprite')));
     //html文件监听
-    let htmlPath = paths.html+'/**/*.html';
+    let htmlPath = paths.html + '/**/*.html';
     gulp.src(htmlPath)
         .pipe(watch(htmlPath, () => gulp.start('htmlMin')));
 
     // 监听刷新
     reloadBrowser();
+});
+
+//清空打包目录
+gulp.task('clean:dist', () => {
+    return del([paths.dist], {
+        force: true
+    });
+});
+
+//清空编译过后目录
+gulp.task('clean:static', () => {
+    return del([paths.static], {
+        force: true
+    });
+});
+
+//复制打包目录
+gulp.task("copy:dist", () => {
+    return gulp.src([paths.static + '/**/*',
+            '!' + paths.static + '/**/*.scss'
+        ])
+        .pipe(gulp.dest(paths.dist));
+});
+
+//压缩打包
+gulp.task('release', (cb) => {
+    release = true;
+    sequence(['clean:dist', 'clean:static', 'clearCache'], ['htmlMin', 'jsmin', 'autoprefixer', 'svgsprite', 'imgMin'], 'copy:dist', cb);
 });

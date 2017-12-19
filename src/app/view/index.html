@@ -6,13 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>gulp+webpack</title>
+    <link rel="stylesheet" href="/css/global.css">
     <link rel="stylesheet" href="/css/index.css">
     <script src='/common/jquery-3.2.1.min.js'></script>
     <script>
         $.ajax({
             url: '/svg/svg.svg',
             dataType:'text',
-            success:(d) => {
+            success:function(d){
                 $('#svg').html(d);
             }
         })
@@ -22,8 +23,10 @@
 <body>
     <div id="svg"></div>
     <svg id="rotate"><use xlink:href="#icon-plus"></use></svg>
+    gg
     <div id="text"></div>
     <img src="/img/MM1map.jpg" alt="">
+    <div id="btn">异步加载模块</div>
     <script src='/js/index.js'></script>
 </body>
 

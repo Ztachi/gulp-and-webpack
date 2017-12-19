@@ -14,7 +14,7 @@
 }
 
 #rotate{
-    @include equalWH(40,false);
+    @include equalWH(20,false);
     background-color: forestgreen;
     animation: rotate 1s linear infinite;
 }
