@@ -3,7 +3,7 @@
  * @Date: 2017-12-08 15:18:50 
  * @Description: 
  * @Last Modified by: 詹真琦(legendryztachi@gmail.com)
- * @Last Modified time: 2017-12-19 15:13:16
+ * @Last Modified time: 2017-12-19 16:46:31
  */
 
 const gulp = require("gulp"),
@@ -123,7 +123,9 @@ gulp.task('sass', () => {
 gulp.task('js', () => {
     return gulp.src(paths.js + '/**/*.js')
         .pipe(named())
-        .pipe(webpack(require('./webpack.config')))
+        .pipe(webpack(require('./webpack.config')).on('error',(e)=>{
+            gutil.log(gutil.colors.red('[webpack]:'+e));
+        }))
         .pipe(gulp.dest(paths.staticJs));
 });
 

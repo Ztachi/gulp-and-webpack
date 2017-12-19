@@ -7,3 +7,7 @@ document.querySelector('#btn').onclick=()=>{
 }
 
 document.querySelector('#text').innerText = '重装机兵1地图'+repea('3');
+$.ajax({
+    url:'/svg/svg.svg',
+    success:(d)=>console.log(d)
+})
