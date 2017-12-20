@@ -3,11 +3,12 @@
  * @Date: 2017-12-08 15:18:44 
  * @Description: 
  * @Last Modified by: 詹真琦(legendryztachi@gmail.com)
- * @Last Modified time: 2017-12-20 09:15:20
+ * @Last Modified time: 2017-12-20 11:00:36
  */
-const webpack = require('webpack'),
-    path = require('path'),
-    BASE_PATH = './src/app/js/';
+import webpack from 'webpack';
+import path from 'path';
+
+const BASE_PATH = './src/app/js/';
 
 module.exports = {
     entry:{
@@ -34,14 +35,9 @@ module.exports = {
     module:{
         rules:[
             {
-                test:/(\.html|\.js)$/,
+                test:/\.js$/,
                 use:{
-                    loader: "babel-loader",
-                    options: {
-                        presets: [
-                            "es2015"
-                        ]
-                    }
+                    loader: "babel-loader"
                 },
                 //忽略文件夹
                 exclude: /node_modules/

@@ -3,7 +3,7 @@
  * @Date: 2017-12-08 15:18:50 
  * @Description: 
  * @Last Modified by: 詹真琦(legendryztachi@gmail.com)
- * @Last Modified time: 2017-12-20 10:48:41
+ * @Last Modified time: 2017-12-20 11:00:03
  */
 
 import gulp from 'gulp';
@@ -70,11 +70,10 @@ function reloadBrowser() {
         let url = obj.path.replace(/\\/g, "/");
         let absurl = url;
         url = path.relative(paths.src, url).replace(/\\/g, "/");
-        gutil.log(gutil.colors.green("[KS] " + absurl));
+        gutil.log(gutil.colors.bgGreen("[KS] " + absurl));
 
         // skip scss & css
         if (!/\.scss$/.test(url) && !/\.css$/.test(url)) {
-            gutil.log(gutil.colors.bgMagenta(reStart));
             if (reStart) { //如果之前编译报错，就重新编译
                 js();
             }
@@ -108,7 +107,6 @@ function f_sass() {
 
 //编译js
 function f_js() {
-    gutil.log(gutil.colors.bgMagenta('js:' + reStart));
     reStart = false;
     return gulp.src(paths.js + '/**/*.js')
         .pipe(webpack(require('./webpack.config')).on('error', (e) => {
@@ -272,14 +270,14 @@ gulp.task('clean:cache', () =>
 
 //清空打包目录
 gulp.task('clean:dist', () => {
-    return del([paths.dist], {
+    return del(paths.dist, {
         force: true
     });
 });
 
 //清空编译过后目录
 gulp.task('clean:static', () => {
-    return del([paths.static], {
+    return del(paths.static, {
         force: true
     });
 });
