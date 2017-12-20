@@ -3,7 +3,7 @@
  * @Date: 2017-12-08 15:18:44 
  * @Description: 
  * @Last Modified by: 詹真琦(legendryztachi@gmail.com)
- * @Last Modified time: 2017-12-19 17:25:22
+ * @Last Modified time: 2017-12-20 09:15:20
  */
 const webpack = require('webpack'),
     path = require('path'),
@@ -24,23 +24,6 @@ module.exports = {
         //一般用于动态加载不立即需要又较大的js文件
         chunkFilename:'[name].chunk.js'
         
-    },
-    // 观察模式
-    // 监测代码，并在代码改变的时候进行重新编译
-    watch: true,
-    watchOptions: {
-        // 当代码首次被改变后增加一个时间延迟
-        // 如果在这段延迟时间内，又有其他代码发生了改变，
-        // 则其他的改变也将在这段延迟时间后，一并进行编译
-        aggregateTimeout: 500,
-
-        // 不进行监测的文件
-        // 监测大量的文件将占用CPU或许多内存空间，例如node_modules
-        ignored: /node_modules/,
-
-        // 每隔一段时间，自动检查代码的改变，例如1000表示每秒进行一次检查
-        // 在观察模式不起作用的时候，可以尝试打开这个配置项
-        poll: 1000
     },
     resolve: {
         // 给路径添加别名，可有效避免模块中require的路径过长
